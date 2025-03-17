@@ -206,7 +206,7 @@ void TIM2_IRQHandler(void)
 	    RF_ChangeState(PORT1_OFF_PORT2_ON);
 	  }
 
-	  counter++;
+	  counter = (counter + 1) % 255;
 
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);

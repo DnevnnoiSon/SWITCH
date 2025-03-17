@@ -79,6 +79,7 @@
 #define USBD_INTERFACE_STRING_FS     "USBTMC Main Interface"
 /*Размер дескриптора, определенный в спецификации USB 3.0*/
 #define USB_SIZ_BOS_DESC            0x0C
+
 /* USER CODE BEGIN PRIVATE_DEFINES */
 
 /* USER CODE END PRIVATE_DEFINES */

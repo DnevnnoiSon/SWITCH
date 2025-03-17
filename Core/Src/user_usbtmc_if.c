@@ -172,10 +172,6 @@ static uint8_t USBTMC_SCPI_Command_Parsing(void)
 		}
 		Leksem_Driver[idx_byte].pLeksem = ptrLexeme;
 	}
-
-	if(CommandBuffer[12] == '?'){
-		return USBD_OK;
-	}
 	return USBD_OK;
 }
 

@@ -26,7 +26,6 @@
 #include "usbd_cdc.h"
 #include "usbd_tmc.h"
 
-
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
@@ -71,6 +70,7 @@ void MX_USB_DEVICE_Init(void)
 
 	USBD_Start(&hUsbDeviceFS);
 }
+
 
 /**
   * @}
