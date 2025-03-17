@@ -278,8 +278,6 @@ static uint8_t USBTMC_SCPI_Command_Storage_DeInit(void)
 		 Leksem_Driver[index].pFoo = NULL;
 	}
 
-	memset(CommandBuffer,0, MAX_SCPI_CMD_SIZE);
-
 	CMD_IncomingActions[3] = USBTMC_SCPI_Default_Execute;
 	return USBD_OK;
 }
