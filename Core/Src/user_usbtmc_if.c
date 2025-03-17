@@ -3,8 +3,6 @@
 #include <usbd_def.h>
 #include <usbd_tmc.h>
 #include "flash_user.h"
-//INCLUDE CLASSES:
-#include "rf_switch_class.h"
 
 #include <user_usbtmc_if.h>
 
@@ -13,6 +11,8 @@
 #define SIZE_UNIQUE_ID 	  7
 #define ACTION_COUNTER 	  4
 #define CLASS_COUNT 	  1
+
+#define DEVICE_CLASS_COUNT 10
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
 extern USBD_USBTMC_HandleTypeDef *USBTMC_Class_Data;
@@ -63,13 +63,7 @@ Leksem_Driver_Typedef Leksem_Driver[] = {
 };
 
 //НАХОЖДЕНИЕ КЛАССА, ПЕРЕБОРОМ
-uint8_t (*checkClass[])(char *lexem) = {
-	///СЮДА_ПОМЕЩАЮТСЯ_ПОЛЬЗОВАТЕЛЬСКИЕ_КЛАССЫ:
-	checkClassSWITCH,
-	/*USER CODE BEGIN */
-
-	/*USER CODE END */
-};
+uint8_t (*checkClass[DEVICE_CLASS_COUNT])(char *lexem);
 
 //=========================================================================================
 //______________________ ЗАПУСК ДЕЙСТВИЯ ПРИ НАЛИЧИИ ДАННЫХ _______________________________
@@ -105,6 +99,7 @@ void USBTMC_IncomingActionStart( void )
 uint8_t USBTMC_SCPI_Command_From_Host(uint8_t *DataOutBuffer)
 {
 	uint32_t idx_byte;
+	memset(CommandBuffer, 0, MAX_SCPI_CMD_SIZE);
 
 	idx_data = idx_data + BULK_HEADER_SIZE;
 
@@ -178,7 +173,7 @@ static uint8_t USBTMC_SCPI_Command_Parsing(void)
 		Leksem_Driver[idx_byte].pLeksem = ptrLexeme;
 	}
 
-	if(CommandBuffer[21] == 'A'){
+	if(CommandBuffer[12] == '?'){
 		return USBD_OK;
 	}
 	return USBD_OK;
@@ -377,8 +372,21 @@ static uint8_t USBTMC_SCPI_Command_Response_MSG( void )
 	return USBD_OK;
 }
 
+//===========================================================================================
+//______________________ДОБАВЛЕНИЕ ПОЛЬЗОВАТЕЛЬСКОГО КЛАССА__________________________________
+//===========================================================================================
+uint8_t Class_Set(uint8_t (*newClass)(char *lexem))
+{
+	static uint32_t class_index = 0;
 
+	if(class_index >= DEVICE_CLASS_COUNT){
+		return USBD_FAIL;
+	}
+	checkClass[class_index] = newClass;
+	class_index++;
 
+	return USBD_OK;
+}
 
 
 

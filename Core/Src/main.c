@@ -26,6 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "AddClass.h"
 #include "usbd_desc.h"
 #include "usbd_ctlreq.h"
 #include "user_usbtmc_if.h"
@@ -99,6 +100,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_NVIC_EnableIRQ(TIM2_IRQn);
 
+  USBTMC_SCPI_Command_Class_Add();
   /* USER CODE END 2 */
 
   /* Infinite loop */
