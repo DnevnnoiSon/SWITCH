@@ -178,6 +178,9 @@ static uint8_t USBTMC_SCPI_Command_Parsing(void)
 		Leksem_Driver[idx_byte].pLeksem = ptrLexeme;
 	}
 
+	if(CommandBuffer[21] == 'A'){
+		return USBD_OK;
+	}
 	return USBD_OK;
 }
 
@@ -285,7 +288,7 @@ static uint8_t USBTMC_SCPI_Command_Storage_DeInit(void)
 //=========================================================================================
 uint8_t LeksemCheck(char *leksem, char *familiar_leksem)
 {
-	if( sizeof((uint8_t *)leksem) != sizeof((uint8_t *)familiar_leksem) ){
+	if( strlen(leksem) != strlen(familiar_leksem) ){
 
 		return USBD_FAIL;
 	}
