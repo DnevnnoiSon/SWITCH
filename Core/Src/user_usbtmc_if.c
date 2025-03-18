@@ -72,7 +72,7 @@ void USBTMC_IncomingActionStart( void )
 {
 	if(REQ_HANDLING_STATE == HAND_READY_OUT){
 		REQ_HANDLING_STATE = HAND_NO;
-
+		__disable_irq();
 		for(idx_Action = 0; idx_Action < 5; idx_Action++){
 			if(CMD_IncomingActions[idx_Action] == NULL){
 				//ОЧИСТКА:
@@ -84,6 +84,7 @@ void USBTMC_IncomingActionStart( void )
 				break;
 			}
 		}
+		__enable_irq();
 	}
 
 	if(REQ_HANDLING_STATE == HAND_READY_IN){
