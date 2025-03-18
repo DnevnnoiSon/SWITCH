@@ -18,6 +18,7 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 extern USBD_USBTMC_HandleTypeDef *USBTMC_Class_Data;
 extern TD_HANDLING_READY REQ_HANDLING_STATE;
 extern uint32_t idx_data;
+extern uint32_t prev_data;
 
 //ПРИШЕДШАЯ КОМАНДА
 uint8_t CommandBuffer[MAX_SCPI_CMD_SIZE];
@@ -72,7 +73,7 @@ void USBTMC_IncomingActionStart( void )
 {
 	if(REQ_HANDLING_STATE == HAND_READY_OUT){
 		REQ_HANDLING_STATE = HAND_NO;
-		__disable_irq();
+
 		for(idx_Action = 0; idx_Action < 5; idx_Action++){
 			if(CMD_IncomingActions[idx_Action] == NULL){
 				//ОЧИСТКА:
@@ -84,13 +85,16 @@ void USBTMC_IncomingActionStart( void )
 				break;
 			}
 		}
-		__enable_irq();
+		//ГОТОВИМ КОНЕЧНУЮ ТОЧКУ К ПРИЕМУ НОВЫХ ДАННЫХ:
+		USBD_LL_PrepareReceive(&hUsbDeviceFS, USBTMC_EPOUT_ADDR, &(USBTMC_Class_Data->DataOutBuffer[prev_data]), USBTMC_EPOUT_SIZE);
 	}
 
 	if(REQ_HANDLING_STATE == HAND_READY_IN){
 		REQ_HANDLING_STATE = HAND_NO;
 	  //ОТПРАВКА ОТВЕТА:
 		CMD_IncomingActions[5]();
+		//ГОТОВИМ КОНЕЧНУЮ ТОЧКУ К ПРИЕМУ НОВЫХ ДАННЫХ:
+		USBD_LL_PrepareReceive(&hUsbDeviceFS, USBTMC_EPOUT_ADDR, &(USBTMC_Class_Data->DataOutBuffer[prev_data]), USBTMC_EPOUT_SIZE);
 	}
 }
 
@@ -177,6 +181,7 @@ static uint8_t USBTMC_SCPI_Command_Parsing(void)
 	if(LeksemCheck(Leksem_Driver[3].pLeksem, "STOP") == USBD_OK){
 		return USBD_OK;
 	}
+
 	return USBD_OK;
 }
 
@@ -214,7 +219,6 @@ static uint8_t IDN_LeksemCheck( void )
 	if(Leksem_Driver[1].pLeksem != 0 ){
 		return USBD_FAIL;
 	}
-
 	if (LeksemCheck( Leksem_Driver[0].pLeksem, (char *)"*IDN?" ) == USBD_OK){
 	//команда относится к идиентификации устройства USBTMC
 		//Выставление флага на ответную часть:

@@ -20,7 +20,7 @@ USBD_USBTMC_HandleTypeDef *USBTMC_Class_Data;
 
 //ТОЧКА ЧТЕНИЯ
 uint32_t idx_data;
-uint32_t prev_data;
+volatile uint32_t prev_data;
 
 TD_HANDLING_READY REQ_HANDLING_STATE = HAND_NO;
 
@@ -593,8 +593,8 @@ static uint8_t  USBD_USBTMC_DataOut (USBD_HandleTypeDef *pdev, uint8_t epnum)
 
 			break;
 		}
-		//ГОТОВИМ КОНЕЧНУЮ ТОЧКУ К ПРИЕМУ НОВЫХ ДАННЫХ:
-		USBD_LL_PrepareReceive(pdev, USBTMC_EPOUT_ADDR, &(USBTMC_Class_Data->DataOutBuffer[prev_data]), USBTMC_EPOUT_SIZE);
+		//ГОТОВИМ КОНЕЧНУЮ ТОЧКУ К ПРИЕМУ НОВЫХ ДАННЫХ ПО ОКОНЧАНИЮ ОБРАБОТКИ
+		//(ОБРАБОТКА НАЧИНАЕТСЯ ПОСЛЕ ПРЕРЫВАНИЯ)
 	}
 	else{
 		//Игнорируем принятый пакет, т.к. он не соотвествует стандарту USBTMC.
