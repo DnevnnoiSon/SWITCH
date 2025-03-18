@@ -46,7 +46,7 @@ MEMORY
 {
   RAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 16K
   FLASH  (rx)     : ORIGIN = 0x08000000,   LENGTH = 126K
-  FLASH_USER (rw) : ORIGIN = 0x0801F800,   LENGTH = 2K /* Последние 2 КБ Flash */
+  FLASH_USER (rw) : ORIGIN = 0x0801F800,   LENGTH = 2K /* ????????? 2 ?? Flash */
 }
 
 /* Sections */
@@ -165,8 +165,8 @@ SECTIONS
 	
    .flash_user : 
   {
-    *(.user_data*)            /* Пользовательская Flash-секция */
-    . = ALIGN(4);             /* Выравнивание по 4 байта */
+    *(.user_data*)            /* ???????????????? Flash-?????? */
+    . = ALIGN(4);             /* ???????????? ?? 4 ????? */
   } > FLASH_USER
   
   /* User_heap_stack section, used to check that there is enough "RAM" Ram  type memory left */

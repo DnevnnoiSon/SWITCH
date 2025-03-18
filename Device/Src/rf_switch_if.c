@@ -24,54 +24,49 @@ uint8_t RF_GetState(void)
 */
 uint8_t RF_ChangeState( uint8_t newState)
 {
-    uint8_t errCode = 0;
+  uint8_t errCode = 0;
 
-    switch(newState)
+  switch(newState)
+  {
+    case PORT1_ON_PORT2_OFF:
     {
-        case PORT1_ON_PORT2_OFF:
-        {
-            //Код управления состоянием пинами
-            HAL_GPIO_WritePin(CTRL1_GPIO_Port, CTRL1_Pin, GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(CTRL2_GPIO_Port, CTRL2_Pin, GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(CTRL3_GPIO_Port, CTRL3_Pin, GPIO_PIN_RESET);
-            //Управление светодиодами
-            HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, RESET);
-            HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, SET);
-            //Обновляем состояние устройства
-            currentState = PORT1_ON_PORT2_OFF;
-            break;
-        }
-        case PORT1_OFF_PORT2_ON:
-        {
-            //Код управления состоянием пинами
-            HAL_GPIO_WritePin(CTRL1_GPIO_Port, CTRL1_Pin, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(CTRL2_GPIO_Port, CTRL2_Pin, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(CTRL3_GPIO_Port, CTRL3_Pin, GPIO_PIN_SET);
-            //Управление светодиодами
-            HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, SET);
-            HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, RESET);
-            //Обновляем состояние устройства
-            currentState = PORT1_OFF_PORT2_ON;
-            break;
-        }
-        case PORT1_OFF_PORT2_OFF:
-        {
-            //Код управления состоянием пинами
-            HAL_GPIO_WritePin(CTRL1_GPIO_Port, CTRL1_Pin, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(CTRL2_GPIO_Port, CTRL2_Pin, GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(CTRL3_GPIO_Port, CTRL3_Pin, GPIO_PIN_RESET);
-            //Управление светодиодами
-            HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, RESET);
-            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, RESET);
-            //Обновляем состояние устройства
-            currentState = PORT1_OFF_PORT2_OFF;
-            break;
-        }
-        default:
-            break;
+      //Код управления состояния пинами
+      HAL_GPIO_WritePin(CTRL1_GPIO_Port, CTRL1_Pin,  GPIO_PIN_SET);
+      HAL_GPIO_WritePin(CTRL2_GPIO_Port, CTRL2_Pin,  GPIO_PIN_RESET);
+
+       //Обновляем состояние устройства
+      currentState = PORT1_ON_PORT2_OFF;
+
+      break;
+    }
+    case PORT1_OFF_PORT2_ON:
+    {
+      //Код управления состояния пинами
+
+      HAL_GPIO_WritePin(CTRL1_GPIO_Port, CTRL1_Pin,  GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(CTRL2_GPIO_Port, CTRL2_Pin,  GPIO_PIN_SET);
+
+      //Обновляем состояние устройства
+      currentState = PORT1_OFF_PORT2_ON;
+      break;
+    }
+    case PORT1_OFF_PORT2_OFF:
+    {
+
+      //Код управления состояния пинами
+        HAL_GPIO_WritePin(CTRL1_GPIO_Port, CTRL1_Pin,  GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(CTRL2_GPIO_Port, CTRL2_Pin,  GPIO_PIN_RESET);
+
+      //Обновляем состояние устройства
+      currentState = PORT1_OFF_PORT2_OFF;
+
+      break;
     }
 
-    return errCode;
+    default:
+      break;
+  }
+  return errCode;
 }
 
 /*  Функция смены состояния ВЧ ключей. Переключение на следующее состояние

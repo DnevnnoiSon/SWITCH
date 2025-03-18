@@ -19,7 +19,6 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-
 #include "usb_device.h"
 #include "usbd_core.h"
 #include "usbd_desc.h"
@@ -70,7 +69,6 @@ void MX_USB_DEVICE_Init(void)
 
 	USBD_Start(&hUsbDeviceFS);
 }
-
 
 /**
   * @}
