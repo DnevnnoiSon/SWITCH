@@ -112,11 +112,11 @@ uint8_t RF_NextState(void)
 uint8_t RF_PulseSwitchSet( uint32_t pulse)
 {
   uint8_t errCode = 0;
-  
-  pulseValue = pulse;
-  htim2.Init.Period = pulseValue - 1;
-  HAL_TIM_Base_Init(&htim2);
-  
+  if(pulse > 0){
+	  pulseValue = pulse;
+	  htim2.Init.Period = pulseValue - 1;
+	  HAL_TIM_Base_Init(&htim2);
+  }
   return errCode;
   
 }

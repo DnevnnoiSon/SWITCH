@@ -94,7 +94,7 @@ static uint8_t MethodHandling(char *leksem)
 //=========================================================================================
 static uint8_t ArgHandling(char *leksem)
 {
-	HAL_Delay(3);
+	HAL_Delay(10);
 //Если Аргумент не число: (В данном случае это START STOP)
 	if((LeksemCheck(leksem, "START") == USBD_OK) ){
 		CachingControl.pAttenFoo = methodPulseStart;
