@@ -2,8 +2,8 @@
 #include "main.h"
 
 //Текущее состояние устройства
+volatile uint32_t pulseValue = 0;
 volatile uint8_t currentState = 0;
-uint32_t pulseValue = 0;
 extern TIM_HandleTypeDef htim2;
 /*  Функция запроса текущего состояния ВЧ ключей.
     Возвращает:

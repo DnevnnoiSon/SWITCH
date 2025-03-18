@@ -18,6 +18,7 @@ extern uint8_t (*CMD_IncomingActions[4])(void);
 static uint8_t StateHandling(char *leksem);
 static uint8_t MethodHandling(char *leksem);
 static uint8_t ArgHandling(char *leksem);
+static uint8_t Search_ExceptionLexeme( void );
 
 static uint8_t methodStateOff( void );
 static uint8_t methodStatePort1( void );
@@ -54,6 +55,7 @@ uint8_t checkClassSWITCH(char *lexem)
 		Leksem_Driver[2].pFoo = MethodHandling;
 		Leksem_Driver[3].pFoo = ArgHandling;
 
+		Search_ExceptionLexeme();
 /* ОБРАЩАТЬСЯ ТОЛЬКО К ТРЕТЬЕМУ ЭЛЕМЕНТУ  */
 		CMD_IncomingActions[3] = SWITCH_Command_Execute;
 		return USBD_OK;
@@ -67,8 +69,6 @@ static uint8_t StateHandling(char *leksem)
 {
 	if (LeksemCheck( (char *)leksem, (char *)"STATE?" ) == USBD_OK ){
 		CachingControl.pAttenFoo = methodTempState;
-		Leksem_Driver[2].pFoo = NULL;
-		Leksem_Driver[3].pFoo = NULL;
 		return USBD_OK;	//Нет смысла в дальнейшей обработке
 	}
 	if (LeksemCheck( (char *)leksem, (char *)"STATE" ) == USBD_OK ){
@@ -110,6 +110,20 @@ static uint8_t ArgHandling(char *leksem)
   //проверка
 	if((CachingControl.Arg > LIMIT_ARGUMENT) || (CachingControl.Arg < 0)){
 		return USBD_FAIL;
+	}
+	return USBD_OK;
+}
+
+//=========================================================================================
+//____________________________Поиск_Исключения_Лексем______________________________________
+//=========================================================================================
+static uint8_t Search_ExceptionLexeme( void )
+{
+	if(Leksem_Driver[2].pLeksem == NULL){
+		Leksem_Driver[2].pFoo = NULL;
+	}
+	if(Leksem_Driver[3].pLeksem == NULL){
+		Leksem_Driver[3].pFoo = NULL;
 	}
 	return USBD_OK;
 }
