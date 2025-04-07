@@ -14,6 +14,10 @@
 
 #define DEVICE_CLASS_COUNT 10
 
+#define MAX_UNIQUE_ID_SIZE 12
+#define UNIQUE_HEADER	10
+#define UNIQUE_TAIL 	6
+
 extern USBD_HandleTypeDef hUsbDeviceFS;
 extern USBD_USBTMC_HandleTypeDef *USBTMC_Class_Data;
 extern TD_HANDLING_READY REQ_HANDLING_STATE;
@@ -51,7 +55,7 @@ uint8_t (*CMD_IncomingActions[])(void) = {
 
 static uint8_t IDN_LeksemCheck(void);
 static uint8_t UniqueID_set(void);
-static void UniqueID_get(uint8_t *destBuffer, uint32_t lenghBuffer);
+static char* UniqueID_get(void);
 static void InHighReg(uint8_t *command_buf);
 
 Leksem_Driver_Typedef Leksem_Driver[] = {
@@ -221,21 +225,23 @@ static uint8_t IDN_LeksemCheck( void )
 	}
 	if (LeksemCheck( Leksem_Driver[0].pLeksem, (char *)"*IDN?" ) == USBD_OK){
 	//команда относится к идиентификации устройства USBTMC
-		//Выставление флага на ответную часть:
-		char resp_buf[10 + SIZE_UNIQUE_ID + 5 + 1] = { 'T','A','I','R',' ',' ','T','M','C',' ',	//10 символов- заголовок
-														  '0','0','0','0','0','0','0',			//7 символов- серийный номер
-													      ' ','f','1','0','2',					//5 символов- версия FirmWare
-														  '\n'	};								//1 символ- окончание строки
-		uint8_t strSize = 10 + SIZE_UNIQUE_ID + 5 + 1;
+		//Формирование ответного ID Unique:
+		const char resp_header[UNIQUE_HEADER] = { 'T','A','I','R',' ',' ','T','M','C',' '}; 	//10 символов заголовок
+		const char resp_tail[UNIQUE_TAIL] = {' ','f','1','0','2', '\n'};						 //5 символов версия FirmWare + 1 символ окончания строки
+		//получение ID Unique:
+		char *serial_resp = UniqueID_get();
+		uint32_t serial_length = strlen(serial_resp);
 
-		UniqueID_get((uint8_t *)(resp_buf + 10), SIZE_UNIQUE_ID);
 	/* НЕ УБИРАТЬ */
-		if(USBTMC_Class_Data == NULL){
+		if(serial_resp == NULL || USBTMC_Class_Data == NULL){
 			return USBD_FAIL;
 		}
+		memcpy((uint8_t *)(USBTMC_Class_Data->SCPIBulkIn), (uint8_t *)resp_header, UNIQUE_HEADER);
+		memcpy((uint8_t *)(USBTMC_Class_Data->SCPIBulkIn + UNIQUE_HEADER), (uint8_t *)serial_resp, serial_length);
+		memcpy((uint8_t *)(USBTMC_Class_Data->SCPIBulkIn + UNIQUE_HEADER + serial_length), (uint8_t *)resp_tail, UNIQUE_TAIL);
 
-		memcpy((uint8_t *)(USBTMC_Class_Data->SCPIBulkIn), (uint8_t *)resp_buf, strSize);
-		USBTMC_Class_Data->SizeSCPIBulkIn = strSize;
+		USBTMC_Class_Data->SizeSCPIBulkIn = UNIQUE_HEADER + serial_length + UNIQUE_TAIL;
+
 
 		return USBD_OK;
 	}
@@ -262,6 +268,7 @@ static uint8_t USBTMC_SCPI_Command_Handling(void)
 	}
 	return USBD_OK;
 }
+
 
 //=========================================================================================
 //__________________Деинициализация_Хранилищ_Обработки_Команды_____________________________
@@ -321,13 +328,23 @@ static void InHighReg(uint8_t *CommandBuffer)
 //===========================================================================================
 static uint8_t UniqueID_set(void)
 {
+	uint32_t leksem_size = strlen( Leksem_Driver[1].pLeksem );
+
 	if((Leksem_Driver[2].pLeksem != 0) ||
 	   (Leksem_Driver[1].pLeksem == 0)){
 		return USBD_FAIL;
 	}
+
+	/* \n - символ окончания ID */
+	char Data[leksem_size + 2];
+	strncpy(Data, Leksem_Driver[1].pLeksem, leksem_size);
+
+	Data[leksem_size] = '\n';
+	Data[leksem_size + 1] = '\0';
+
 	if(LeksemCheck( Leksem_Driver[0].pLeksem, (char *)"UNIQUE" ) == USBD_OK){
 		//Копируем в FLASH память
-		if(Flash_WriteBuffer((uint8_t *)Leksem_Driver[1].pLeksem, strlen(Leksem_Driver[1].pLeksem)) != HAL_OK){
+		if(Flash_WriteBuffer((uint8_t *)Data) != HAL_OK){
 			return USBD_FAIL;
 		}
 		return USBD_OK;
@@ -338,14 +355,19 @@ static uint8_t UniqueID_set(void)
 //===========================================================================================
 //_________________________________ ПОЛУЧЕНИЕ ID ____________________________________________
 //===========================================================================================
-static void UniqueID_get(uint8_t *destBuffer, uint32_t lenghBuffer)
+static char* UniqueID_get(void)
 {
+	static char serial_resp[MAX_UNIQUE_ID_SIZE];
+
+	memset(serial_resp, '\0' , MAX_UNIQUE_ID_SIZE);
   //Копируем в конечный буффер серийный номер устройства
-  Flash_ReadBuffer(destBuffer, lenghBuffer);
+	Flash_ReadBuffer(serial_resp);
 
   /*USER CODE BEGIN */
+//первичная обработка  ID Unique если потребуется:
 
   /*USER CODE END */
+	return serial_resp;
 }
 //===========================================================================================
 //_________________________ВЫПОЛНЕНИЕ_ДЕЙСТВИЯ ПО_УМОЛЧАНИЮ__________________________________

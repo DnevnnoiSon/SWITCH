@@ -9,14 +9,16 @@
 //=========================================================================================
 //___________________________ ЗАПИСЬ ДАННЫХ В FLASH _______________________________________
 //=========================================================================================
-HAL_StatusTypeDef Flash_WriteBuffer(uint8_t *Data, uint32_t Size)
+HAL_StatusTypeDef Flash_WriteBuffer(uint8_t *Data)
 {
     HAL_StatusTypeDef status;
     FLASH_EraseInitTypeDef eraseInitStruct;
     uint32_t pageError;
     uint32_t idx_word;
 
-    // Выравнивание размера до 4 байт
+    uint32_t Size = strlen((char *)Data);
+
+    // Выравнивание размера до 4 байт (учитывая заключительный символ ID)
     uint32_t paddedSize = (Size + 3) & ~3;
     uint32_t tempBuffer[paddedSize / 4];
 
@@ -34,7 +36,6 @@ HAL_StatusTypeDef Flash_WriteBuffer(uint8_t *Data, uint32_t Size)
         HAL_FLASH_Lock();
         return status;
     }
-
     // Запись 32-битными словами
     for (idx_word = 0; idx_word < (paddedSize / 4); idx_word++) {
         status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD,
@@ -45,7 +46,6 @@ HAL_StatusTypeDef Flash_WriteBuffer(uint8_t *Data, uint32_t Size)
             return status;
         }
     }
-
     HAL_FLASH_Lock();
 
     return HAL_OK;
@@ -54,20 +54,25 @@ HAL_StatusTypeDef Flash_WriteBuffer(uint8_t *Data, uint32_t Size)
 //=========================================================================================
 //___________________________ ЧТЕНИЕ ДАННЫХ С FLASH _______________________________________
 //=========================================================================================
-void Flash_ReadBuffer(uint8_t *Data, uint32_t Size)
+void Flash_ReadBuffer(char *Data)
 {
-    uint32_t idx_byte;
+    uint32_t idx_byte = 0;
+    uint8_t flash_byte;
     uint32_t word;
 
-    for (idx_byte = 0; idx_byte < Size; idx_byte++) {
+    while( idx_byte < 12 ) {
         // Читаем 32-битное слово и извлекаем нужный байт
         word = *(__IO uint32_t *)(FLASH_USER_START_ADDR + (idx_byte / 4) * 4);
-        Data[idx_byte] = (word >> (8 * (idx_byte % 4))) & 0xFF;
+
+        flash_byte = ((word >> (8 * (idx_byte % 4))) & 0xFF);
+
+        if (flash_byte  == '\n' ){
+        	break;
+        }
+        Data[idx_byte] = flash_byte;
+        idx_byte++;
     }
 }
-
-
-
 
 
 
