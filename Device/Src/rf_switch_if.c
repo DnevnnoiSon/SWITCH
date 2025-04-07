@@ -31,8 +31,8 @@ uint8_t RF_ChangeState( uint8_t newState)
     case PORT1_ON_PORT2_OFF:
     {
       //Код управления состояния пинами
-      HAL_GPIO_WritePin(CTRL1_GPIO_Port, CTRL1_Pin,  GPIO_PIN_SET);
-      HAL_GPIO_WritePin(CTRL2_GPIO_Port, CTRL2_Pin,  GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(CTRL1_GPIO_Port, CTRL1_Pin,  GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(CTRL2_GPIO_Port, CTRL2_Pin,  GPIO_PIN_SET);
 
        //Обновляем состояние устройства
       currentState = PORT1_ON_PORT2_OFF;
@@ -43,8 +43,8 @@ uint8_t RF_ChangeState( uint8_t newState)
     {
       //Код управления состояния пинами
 
-      HAL_GPIO_WritePin(CTRL1_GPIO_Port, CTRL1_Pin,  GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(CTRL2_GPIO_Port, CTRL2_Pin,  GPIO_PIN_SET);
+      HAL_GPIO_WritePin(CTRL1_GPIO_Port, CTRL1_Pin,  GPIO_PIN_SET);
+      HAL_GPIO_WritePin(CTRL2_GPIO_Port, CTRL2_Pin,  GPIO_PIN_RESET);
 
       //Обновляем состояние устройства
       currentState = PORT1_OFF_PORT2_ON;
