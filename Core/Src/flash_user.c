@@ -6,6 +6,8 @@
 #define FLASH_USER_START_ADDR  0x0801F800  // Начало пользовательской области
 #define FLASH_USER_END_ADDR    0x0801FFFF  // Конец пользовательской области (128 КБ Flash)
 
+#define MAX_UNIQUE_ID_SIZE 16
+
 //=========================================================================================
 //___________________________ ЗАПИСЬ ДАННЫХ В FLASH _______________________________________
 //=========================================================================================
@@ -60,16 +62,18 @@ void Flash_ReadBuffer(char *Data)
     uint8_t flash_byte;
     uint32_t word;
 
-    while( idx_byte < 12 ) {
+    while( idx_byte < MAX_UNIQUE_ID_SIZE ) {
         // Читаем 32-битное слово и извлекаем нужный байт
         word = *(__IO uint32_t *)(FLASH_USER_START_ADDR + (idx_byte / 4) * 4);
 
         flash_byte = ((word >> (8 * (idx_byte % 4))) & 0xFF);
 
+        Data[idx_byte] = flash_byte;
+
         if (flash_byte  == '\n' ){
         	break;
         }
-        Data[idx_byte] = flash_byte;
+
         idx_byte++;
     }
 }

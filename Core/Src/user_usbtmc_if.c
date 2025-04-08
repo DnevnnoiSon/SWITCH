@@ -14,9 +14,9 @@
 
 #define DEVICE_CLASS_COUNT 10
 
-#define MAX_UNIQUE_ID_SIZE 12
-#define UNIQUE_HEADER	10
-#define UNIQUE_TAIL 	6
+#define MAX_UNIQUE_ID_SIZE 16
+#define UNIQUE_HEADER	7
+
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
 extern USBD_USBTMC_HandleTypeDef *USBTMC_Class_Data;
@@ -226,8 +226,7 @@ static uint8_t IDN_LeksemCheck( void )
 	if (LeksemCheck( Leksem_Driver[0].pLeksem, (char *)"*IDN?" ) == USBD_OK){
 	//команда относится к идиентификации устройства USBTMC
 		//Формирование ответного ID Unique:
-		const char resp_header[UNIQUE_HEADER] = { 'T','A','I','R',' ',' ','T','M','C',' '}; 	//10 символов заголовок
-		const char resp_tail[UNIQUE_TAIL] = {' ','f','1','0','2', '\n'};						 //5 символов версия FirmWare + 1 символ окончания строки
+		const char resp_header[UNIQUE_HEADER] = { 'P','E','1','2','4','4',' ' }; 	//7 символов заголовок
 		//получение ID Unique:
 		char *serial_resp = UniqueID_get();
 		uint32_t serial_length = strlen(serial_resp);
@@ -238,9 +237,8 @@ static uint8_t IDN_LeksemCheck( void )
 		}
 		memcpy((uint8_t *)(USBTMC_Class_Data->SCPIBulkIn), (uint8_t *)resp_header, UNIQUE_HEADER);
 		memcpy((uint8_t *)(USBTMC_Class_Data->SCPIBulkIn + UNIQUE_HEADER), (uint8_t *)serial_resp, serial_length);
-		memcpy((uint8_t *)(USBTMC_Class_Data->SCPIBulkIn + UNIQUE_HEADER + serial_length), (uint8_t *)resp_tail, UNIQUE_TAIL);
 
-		USBTMC_Class_Data->SizeSCPIBulkIn = UNIQUE_HEADER + serial_length + UNIQUE_TAIL;
+		USBTMC_Class_Data->SizeSCPIBulkIn = UNIQUE_HEADER + serial_length;
 
 
 		return USBD_OK;
