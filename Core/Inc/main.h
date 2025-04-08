@@ -59,14 +59,18 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define LED2_Pin GPIO_PIN_15
 #define LED2_GPIO_Port GPIOC
-#define CTRL1_Pin GPIO_PIN_3
-#define CTRL1_GPIO_Port GPIOA
-#define CTRL2_Pin GPIO_PIN_4
+#define CTRL3_Pin GPIO_PIN_0
+#define CTRL3_GPIO_Port GPIOA
+#define CTRL2_Pin GPIO_PIN_1
 #define CTRL2_GPIO_Port GPIOA
-#define CC2_Pin GPIO_PIN_13
-#define CC2_GPIO_Port GPIOB
-#define CC1_Pin GPIO_PIN_14
-#define CC1_GPIO_Port GPIOB
+#define CC2_Pin GPIO_PIN_2
+#define CC2_GPIO_Port GPIOA
+#define LED1_Pin GPIO_PIN_15
+#define LED1_GPIO_Port GPIOB
+#define CTRL1_Pin GPIO_PIN_8
+#define CTRL1_GPIO_Port GPIOA
+#define CC1_Pin GPIO_PIN_10
+#define CC1_GPIO_Port GPIOA
 #define SCL_PCT2075_Pin GPIO_PIN_6
 #define SCL_PCT2075_GPIO_Port GPIOB
 #define SDA_PCT2075_Pin GPIO_PIN_7

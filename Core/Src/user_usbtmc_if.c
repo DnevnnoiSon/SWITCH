@@ -15,7 +15,7 @@
 #define DEVICE_CLASS_COUNT 10
 
 #define MAX_UNIQUE_ID_SIZE 16
-#define UNIQUE_HEADER	7
+#define UNIQUE_HEADER	5
 
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
@@ -226,7 +226,7 @@ static uint8_t IDN_LeksemCheck( void )
 	if (LeksemCheck( Leksem_Driver[0].pLeksem, (char *)"*IDN?" ) == USBD_OK){
 	//команда относится к идиентификации устройства USBTMC
 		//Формирование ответного ID Unique:
-		const char resp_header[UNIQUE_HEADER] = { 'P','E','1','2','4','4',' ' }; 	//7 символов заголовок
+		const char resp_header[UNIQUE_HEADER] = { 'S','M','4','4',' ' }; 	//5 символов заголовок
 		//получение ID Unique:
 		char *serial_resp = UniqueID_get();
 		uint32_t serial_length = strlen(serial_resp);
