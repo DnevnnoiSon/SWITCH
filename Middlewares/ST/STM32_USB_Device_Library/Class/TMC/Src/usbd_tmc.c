@@ -477,7 +477,7 @@ static uint8_t  *USBD_USBTMC_GetDeviceQualifierDesc (uint16_t *length)
 //                  ||<------12----->||<-----52------>||
 //					||---------------||---------------||
 //					||		         ||			      ||
-//					||  BULK HEADER  || SCPI command  ||
+//					||  BULK HEADER  || SCPI COMMAND  ||
 //					||		         ||    (Data)     ||
 //					||---------------||---------------||
 //

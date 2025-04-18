@@ -226,7 +226,7 @@ static uint8_t IDN_LeksemCheck( void )
 	if (LeksemCheck( Leksem_Driver[0].pLeksem, (char *)"*IDN?" ) == USBD_OK){
 	//команда относится к идиентификации устройства USBTMC
 		//Формирование ответного ID Unique:
-		const char resp_header[UNIQUE_HEADER] = { 'S','M','4','4',' ' }; 	//5 символов заголовок
+		const char resp_header[UNIQUE_HEADER] = { 'X','X','X','X',' ' }; 	//5 символов заголовок
 		//получение ID Unique:
 		char *serial_resp = UniqueID_get();
 		uint32_t serial_length = strlen(serial_resp);
