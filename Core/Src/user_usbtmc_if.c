@@ -3,8 +3,9 @@
 #include <usbd_def.h>
 #include <usbd_tmc.h>
 #include "flash_user.h"
+#include "atten.h"
 
-#include <user_usbtmc_if.h>
+#include "user_usbtmc_if.h"
 
 #define MAX_SCPI_CMD_SIZE 52
 #define BULK_HEADER_SIZE  12
@@ -92,7 +93,7 @@ void USBTMC_IncomingActionStart( void )
 		//ГОТОВИМ КОНЕЧНУЮ ТОЧКУ К ПРИЕМУ НОВЫХ ДАННЫХ:
 		USBD_LL_PrepareReceive(&hUsbDeviceFS, USBTMC_EPOUT_ADDR, &(USBTMC_Class_Data->DataOutBuffer[prev_data]), USBTMC_EPOUT_SIZE);
 	}
-
+	//Aten_State_Selector();
 	if(REQ_HANDLING_STATE == HAND_READY_IN){
 		REQ_HANDLING_STATE = HAND_NO;
 	  //ОТПРАВКА ОТВЕТА:
@@ -203,7 +204,7 @@ static uint8_t USBTMC_SCPI_Command_Class_Find(void )
 	}
 //Перебор классов:
 	for(index =  0; index < ArraySize; index++){
-//Проверка на наличие поисковика класса:		/* НЕ УБИРАТЬ */
+//Проверка на наличие поисковика класса: /* @warning Необходимо проверять во избежание падения sefault */
 		if(checkClass[index] == NULL) {
 				return USBD_FAIL;
 		}
@@ -255,7 +256,7 @@ static uint8_t USBTMC_SCPI_Command_Handling(void)
 	uint32_t ArraySize = sizeof(Leksem_Driver) / 8 ;
 
 	for(index  = 1; index < ArraySize; index++){
-//Проверка на наличие обработчика лексемы:		/* НЕ УБИРАТЬ */
+//Проверка на наличие обработчика лексемы:	/* @warning Необходимо проверять во избежание падения sefault */
 		if(Leksem_Driver[index].pFoo == NULL) {
 			return USBD_OK;
 		}
@@ -292,11 +293,9 @@ static uint8_t USBTMC_SCPI_Command_Storage_DeInit(void)
 uint8_t LeksemCheck(char *leksem, char *familiar_leksem)
 {
 	if( strlen(leksem) != strlen(familiar_leksem) ){
-
 		return USBD_FAIL;
 	}
 	if(strstr( (const char *)(leksem), (const char *)familiar_leksem) != NULL){
-
 		return USBD_OK;
 	}
 	return USBD_FAIL;

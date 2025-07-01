@@ -21,5 +21,3 @@ uint8_t LeksemCheck(char *leksem, char *familiar_leksem);
 
 #endif /* INC_USER_USBTMC_IF_H_ */
 
-
-

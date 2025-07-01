@@ -98,8 +98,6 @@ int main(void)
   MX_I2C1_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
-  HAL_NVIC_EnableIRQ(TIM2_IRQn);
-
   USBTMC_SCPI_Command_Class_Add();
   /* USER CODE END 2 */
 

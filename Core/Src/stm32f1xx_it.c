@@ -22,7 +22,7 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "rf_switch_if.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -195,21 +195,9 @@ void USB_LP_IRQHandler(void)
 void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
-	 static uint8_t counter = 0;
-
-	  if(counter % 2 == 0)
-	  {
-	    RF_ChangeState(PORT1_ON_PORT2_OFF);
-	  }
-	  else
-	  {
-	    RF_ChangeState(PORT1_OFF_PORT2_ON);
-	  }
-
-	  counter = (counter + 1) % 255;
 
   /* USER CODE END TIM2_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim2);
+
   /* USER CODE BEGIN TIM2_IRQn 1 */
 
   /* USER CODE END TIM2_IRQn 1 */
