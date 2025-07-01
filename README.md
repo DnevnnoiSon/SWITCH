@@ -22,8 +22,13 @@
 
 
 
-# ⚙️ SCPI Парсер/логика добавления новых классов:
+# ⚙️ Логика SCPI Парсера 
 ![image](https://github.com/user-attachments/assets/b474c928-91bc-4356-b68d-bdc434bf6ea1)
+
+# ⚙️ Алгоритм работы пользовательких классов / Взаимодействие классов с SCPI парсером
+
+![image](https://github.com/user-attachments/assets/5e8101e4-a80d-4ce2-a308-551e6808b9e2)
+
 
 ---
 
